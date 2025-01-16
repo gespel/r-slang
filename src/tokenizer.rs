@@ -2,7 +2,7 @@ use std::process::exit;
 
 #[derive(Debug)]
 pub enum Token {
-    PRETOKEN(String), IDENTIFIER(String), NUMBER(f32), FUNCTION, SEMICOLON, LEFTPARANTHESIS, RIGHTPARANTHESIS, UNKOWN
+    IDENTIFIER(String), NUMBER(f32), FUNCTION, RETURN, SEMICOLON, LEFTPARANTHESIS, RIGHTPARANTHESIS, UNKOWN
 }
 
 pub struct Tokenizer {
@@ -24,6 +24,9 @@ impl Tokenizer {
                 match value.clone().as_str() {
                     "fn" => {
                         out = Token::FUNCTION;
+                    }
+                    "return" => {
+                        out = Token::RETURN;
                     }
                     _ => {
                         out = Token::IDENTIFIER(value.clone());
@@ -51,17 +54,16 @@ impl Tokenizer {
                 }
                 else {
                     if !substr.is_empty() {
-                       out.push(Token::IDENTIFIER(substr.clone()));
-                       substr = "".to_string();
+                        out.push(Token::IDENTIFIER(substr.clone()));
+                        substr = "".to_string();
                     }
                     match c {
                         '(' => out.push(Token::LEFTPARANTHESIS),
                         ')' => out.push(Token::RIGHTPARANTHESIS),
                         ';' => out.push(Token::SEMICOLON),
-                         _  => println!("BLA")
+                        _   => println!("BLA")
                     } 
                 }
-
             } 
             if !substr.is_empty() {
                 out.push(Token::IDENTIFIER(substr.clone()));
