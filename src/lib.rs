@@ -18,7 +18,7 @@ mod tests {
     #[test]
     fn test_test() {
         let t = tokenizer::Tokenizer::new();
-        println!("{:?}", t.tokenize("asd sten lina"));
+        println!("{:?}", t.tokenize("asd() sten lina"));
         println!("Testtest called!");
     }
 }
