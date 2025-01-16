@@ -1,8 +1,9 @@
 use std::process::exit;
+use std::str::FromStr;
 
 #[derive(Debug)]
 pub enum Token {
-    IDENTIFIER(String), NUMBER(f32), FUNCTION, RETURN, SEMICOLON, LEFTPARANTHESIS, RIGHTPARANTHESIS, LEFTBRACKETS, RIGHTBRACKETS, UNKOWN
+    IDENTIFIER(String), NUMBER(f64), FUNCTION, RETURN, SEMICOLON, LEFTPARANTHESIS, RIGHTPARANTHESIS, LEFTBRACKETS, RIGHTBRACKETS
 }
 
 pub struct Tokenizer {
@@ -17,21 +18,37 @@ impl Tokenizer {
         }
     }
 
-    pub fn check_for_keyword(&mut self, input: &Token) -> Token {
+    pub fn check_for_keyword(&mut self, input: &str) -> Token {
+        let out: Token;
+        match input {
+            "fn" => {
+                out = Token::FUNCTION;
+            }
+            "return" => {
+                out = Token::RETURN;
+            }
+            _ => {
+                out = Token::IDENTIFIER(input.to_string());
+            }
+        }
+        out
+    }
+
+    pub fn check_for_number(&mut self, input: &Token) -> Token {
         let out: Token;
         match input {
             Token::IDENTIFIER(value) => {
-                match value.clone().as_str() {
-                    "fn" => {
-                        out = Token::FUNCTION;
+                let mut sub: String = "".to_string();
+                for c in value.chars() {
+                    if c.is_ascii_digit() {
+                        sub.push(c);
                     }
-                    "return" => {
-                        out = Token::RETURN;
-                    }
-                    _ => {
-                        out = Token::IDENTIFIER(value.clone());
+                    else {
+                        println!("ERROR letter in number detected!");
+                        exit(-1);
                     }
                 }
+                out = Token::NUMBER(f64::from_str(&sub).unwrap());
             }
             _ => {
                 println!("ERROR expected IDENTIFIER");
@@ -42,10 +59,8 @@ impl Tokenizer {
     }
 
     pub fn tokenize(&mut self, input: &str) -> Vec<Token> {
-        let mut string_parts: Vec<String> = Vec::new();
         let parts = input.split(" ");
         let mut out: Vec<Token> = Vec::new();
-
         for p in parts {
             let mut substr: String = "".to_string();
             for c in p.chars() {
@@ -64,25 +79,34 @@ impl Tokenizer {
                         '{' => out.push(Token::LEFTBRACKETS),
                         '}' => out.push(Token::RIGHTBRACKETS),
                         _   => println!("BLA")
-                    } 
+                    }
                 }
-            } 
+            }
             if !substr.is_empty() {
                 out.push(Token::IDENTIFIER(substr.clone()));
+            }
+
+        }
+
+        for i in 0..out.len() {
+            match &mut out[i] {
+                Token::IDENTIFIER(value) => {
+                    out[i] = self.check_for_keyword(value);
+                }
+                _ => {}
             }
         }
 
         for i in 0..out.len() {
-            match &out[i] {
+            match &mut out[i] {
                 Token::IDENTIFIER(value) => {
-                    out[i] = self.check_for_keyword(&out[i]);
+                    if value.as_bytes()[0].is_ascii_digit() {
+                        out[i] = self.check_for_number(&out[i]);
+                    }
                 }
-                _ => {
-
-                }
+                _ => {}
             }
-        } 
-
-        return out;
+        }
+        out
     }
 }
