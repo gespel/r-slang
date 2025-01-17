@@ -1,6 +1,6 @@
 use std::io::BufRead;
 use crate::tokenizer::Token;
-use crate::tokenizer::Token::IDENTIFIER;
+use crate::tokenizer::Token::{*};
 
 pub struct Interpreter {
     index: usize,
@@ -61,18 +61,18 @@ impl Interpreter {
         while self.index < self.tokens.len() {
             println!("Current: {:?}", self.peek());
             match self.consume() {
-                Token::IDENTIFIER(_) => {}
-                Token::NUMBER(_) => {}
-                Token::FUNCTION => {
+                IDENTIFIER(_) => {}
+                NUMBER(_) => {}
+                FUNCTION => {
                     self.parse_function();
 
                 }
-                Token::RETURN => {}
-                Token::SEMICOLON => {}
-                Token::LEFTPARANTHESIS => {}
-                Token::RIGHTPARANTHESIS => {}
-                Token::LEFTBRACKETS => {}
-                Token::RIGHTBRACKETS => {}
+                RETURN => {}
+                SEMICOLON => {}
+                LEFTPARANTHESIS => {}
+                RIGHTPARANTHESIS => {}
+                LEFTBRACKETS => {}
+                RIGHTBRACKETS => {}
             }
         }
     }
