@@ -1,4 +1,5 @@
 mod tokenizer;
+mod interpreter;
 
 #[cfg(test)]
 mod tests {
@@ -7,7 +8,10 @@ mod tests {
     #[test]
     fn test_test() {
         let mut t = tokenizer::Tokenizer::new();
-        println!("{:?}", t.tokenize("fn asd(){}123"));
+        let a = t.tokenize("fn asd(){asd asd 32}");
+        let mut i = interpreter::Interpreter::new(a.clone());
+        i.interpret();
+        println!("{:?}", a.clone());
         println!("Testtest called!");
     }
 }

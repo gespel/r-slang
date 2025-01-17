@@ -2,6 +2,8 @@ use std::process::exit;
 use std::str::FromStr;
 
 #[derive(Debug)]
+#[derive(PartialEq)]
+#[derive(Clone)]
 pub enum Token {
     IDENTIFIER(String), NUMBER(f64), FUNCTION, RETURN, SEMICOLON, LEFTPARANTHESIS, RIGHTPARANTHESIS, LEFTBRACKETS, RIGHTBRACKETS
 }
