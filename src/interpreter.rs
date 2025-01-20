@@ -1,4 +1,5 @@
 use std::io::BufRead;
+use std::process::exit;
 use crate::tokenizer::Token;
 use crate::tokenizer::Token::{*};
 
@@ -18,16 +19,16 @@ impl Interpreter {
     pub fn parse_function(&mut self) {
         if let IDENTIFIER(s) = self.consume() {
             let name = s.clone();
-            if let Token::LEFTPARANTHESIS = self.consume() {
-                if let Token::RIGHTPARANTHESIS = self.consume() {
-                    if let Token::LEFTBRACKETS = self.consume() {
+            if let LEFTPARANTHESIS = self.consume() {
+                if let RIGHTPARANTHESIS = self.consume() {
+                    if let LEFTBRACKETS = self.consume() {
                         println!("Defining function with name {}", name.clone());
                         let mut function_tokens: Vec<Token> = vec![];
                         let mut bracket_count: i32 = -1_i32;
                         while bracket_count != 0 {
-                            if let Token::LEFTBRACKETS = self.peek() {
+                            if let LEFTBRACKETS = self.peek() {
                                 bracket_count -= 1;
-                            } else if let Token::RIGHTBRACKETS = self.peek() {
+                            } else if let RIGHTBRACKETS = self.peek() {
                                 bracket_count += 1;
                                 if bracket_count == 0 {
                                     break;
@@ -48,6 +49,15 @@ impl Interpreter {
 
     pub fn increase_index(&mut self) {
         self.index += 1;
+    }
+
+    pub fn consume_expected(&mut self, expected: Token) -> Token {
+        let out = self.peek().clone();
+        if out == expected {
+            self.increase_index();
+            return out;
+        }
+        exit(-1);
     }
 
     pub fn consume(&mut self) -> Token {
